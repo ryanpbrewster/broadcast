@@ -19,12 +19,20 @@ use broadcast::proto::service::{BroadcastRequest, BroadcastReply, ListenRequest,
 struct BroadcastImpl;
 
 impl Broadcast for BroadcastImpl {
-    fn broadcast(&self, _opts: grpc::RequestOptions, req: BroadcastRequest) -> grpc::SingleResponse<BroadcastReply> {
+    fn broadcast(
+        &self,
+        _opts: grpc::RequestOptions,
+        req: BroadcastRequest,
+    ) -> grpc::SingleResponse<BroadcastReply> {
         println!("broadcasting {}", req.msg);
         grpc::SingleResponse::completed(BroadcastReply::new())
     }
 
-    fn listen(&self, _opts: grpc::RequestOptions, _req: ListenRequest) -> grpc::StreamingResponse<ListenEvent> {
+    fn listen(
+        &self,
+        _opts: grpc::RequestOptions,
+        _req: ListenRequest,
+    ) -> grpc::StreamingResponse<ListenEvent> {
         println!("listening...");
 
         let mut pong = ListenEvent::new();

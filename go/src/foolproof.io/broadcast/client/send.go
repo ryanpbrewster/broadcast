@@ -26,9 +26,9 @@ func main() {
 	c := pb.NewBroadcastClient(conn)
 
 	// Contact the server and print out its response.
-  reply, err := c.Broadcast(context.Background(), &pb.BroadcastRequest{Msg: *msg})
-  if err != nil {
-    log.Fatalf("could not register: %s", err)
-  }
-  log.Println(reply)
+	reply, err := c.Broadcast(context.Background(), &pb.BroadcastRequest{Msg: *msg})
+	if err != nil {
+		log.Fatalf("could not register: %s", err)
+	}
+	log.Println(reply)
 }

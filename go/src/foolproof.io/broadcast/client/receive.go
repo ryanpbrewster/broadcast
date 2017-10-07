@@ -22,15 +22,15 @@ func main() {
 	c := pb.NewBroadcastClient(conn)
 
 	// Contact the server and print out its response.
-  stream, err := c.Listen(context.Background(), &pb.ListenRequest{})
-  if err != nil {
-    log.Fatalf("could not listen: %s", err)
-  }
-  for {
-    evt, err := stream.Recv()
-    if err != nil {
-      log.Fatalf("failure while listening: %s", err)
-    }
-    log.Println(evt)
-  }
+	stream, err := c.Listen(context.Background(), &pb.ListenRequest{})
+	if err != nil {
+		log.Fatalf("could not listen: %s", err)
+	}
+	for {
+		evt, err := stream.Recv()
+		if err != nil {
+			log.Fatalf("failure while listening: %s", err)
+		}
+		log.Println(evt)
+	}
 }
