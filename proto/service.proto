@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package proto;
 
-service Presence {
+service Broadcast {
   rpc Broadcast (BroadcastRequest) returns (BroadcastReply) {}
   // rpc Listen (ListenRequest) returns (stream ListenEvent) {}
 }

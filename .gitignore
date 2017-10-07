@@ -2,8 +2,9 @@
 
 /src/proto/
 
-/go/pkg/
-/go/client
+# Ignore everything but src/ in the go/ dir
+/go/*
+!/go/src/
 /go/src/foolproof.io/broadcast/proto/
 
 /target/
