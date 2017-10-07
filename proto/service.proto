@@ -4,7 +4,7 @@ package proto;
 
 service Broadcast {
   rpc Broadcast (BroadcastRequest) returns (BroadcastReply) {}
-  // rpc Listen (ListenRequest) returns (stream ListenEvent) {}
+  rpc Listen (ListenRequest) returns (stream ListenEvent) {}
 }
 
 message BroadcastRequest {
