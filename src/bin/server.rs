@@ -1,4 +1,5 @@
 extern crate futures;
+use futures::Stream;
 
 extern crate grpc;
 
@@ -28,9 +29,12 @@ impl Broadcast for BroadcastImpl {
     ) -> grpc::StreamingResponse<ListenEvent> {
         println!("listening...");
 
-        let mut pong = ListenEvent::new();
-        pong.set_msg("pong".to_owned());
-        grpc::StreamingResponse::no_metadata(futures::stream::once(Ok(pong)))
+        let pongs = futures::stream::iter_ok(0..).map(|i: u32| {
+            let mut pong = ListenEvent::new();
+            pong.set_msg(format!("pong_{:06}", i));
+            pong
+        });
+        grpc::StreamingResponse::no_metadata(pongs)
     }
 }
 
