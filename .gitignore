@@ -1,0 +1,11 @@
+/.idea/
+
+/src/proto/
+
+/go/pkg/
+/go/client
+/go/src/foolproof.io/broadcast/proto/
+
+/target/
+**/*.rs.bk
+Cargo.lock

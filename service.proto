@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package proto;
+
+service Presence {
+  rpc Broadcast (BroadcastRequest) returns (BroadcastReply) {}
+  // rpc Listen (ListenRequest) returns (stream ListenEvent) {}
+}
+
+message BroadcastRequest {
+  string msg = 1;
+}
+
+message BroadcastReply {
+}
+
+message ListenRequest {
+}
+
+message ListenEvent {
+  string msg = 1;
+}
