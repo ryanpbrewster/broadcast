@@ -1,5 +1,5 @@
 extern crate futures;
-use futures::Stream;
+use futures::{Future, Sink, Stream};
 
 extern crate grpc;
 
@@ -29,11 +29,15 @@ impl Broadcast for BroadcastImpl {
     ) -> grpc::StreamingResponse<ListenEvent> {
         println!("listening...");
 
-        let pongs = futures::stream::iter_ok(0..).map(|i: u32| {
+        let (tx, rx) = futures::sync::mpsc::channel::<String>(1);
+        let mut pongs = rx.map(|msg: String| {
             let mut pong = ListenEvent::new();
-            pong.set_msg(format!("pong_{:06}", i));
+            pong.set_msg(msg);
             pong
-        });
+        }).map_err(|err| {
+                grpc::Error::Other("TODO(rpb): add better error message")
+            });
+        tx.send("asdf".to_owned()).poll();
         grpc::StreamingResponse::no_metadata(pongs)
     }
 }
