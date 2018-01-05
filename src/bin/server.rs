@@ -1,5 +1,5 @@
 extern crate futures;
-use futures::{Future, Sink, Stream};
+use futures::Stream;
 use futures::sync::mpsc::UnboundedSender;
 
 extern crate grpc;
@@ -24,12 +24,14 @@ impl Broadcast for BroadcastImpl {
     ) -> grpc::SingleResponse<BroadcastReply> {
         println!("broadcasting {}", req.msg);
         {
-            let listeners = self.receivers.read().expect(
+            let mut listeners = self.receivers.write().expect(
                 "acquiring write-lock for receivers",
             );
-            for tx in listeners.iter() {
-                tx.send(req.msg.clone());
-            }
+            let init_count = listeners.len();
+            listeners.retain(|tx| {
+                tx.unbounded_send(req.msg.clone()).is_ok()
+            });
+            println!("pushed to {} receivers, {} ok", init_count, listeners.len());
         }
         grpc::SingleResponse::completed(BroadcastReply::new())
     }
@@ -43,19 +45,17 @@ impl Broadcast for BroadcastImpl {
 
         let (tx, rx) = futures::sync::mpsc::unbounded::<String>();
         {
-            self.receivers
-                .write()
-                .expect("acquiring write-lock for receivers")
-                .push(tx);
+            let mut receivers = self.receivers.write().expect("acquiring write-lock for receivers");
+            println!("{} -> {} receivers", receivers.len(), receivers.len() + 1);
+            receivers.push(tx);
         }
-        let mut pongs = rx.map(|msg: String| {
+        grpc::StreamingResponse::no_metadata(rx.map(|msg: String| {
             let mut pong = ListenEvent::new();
             pong.set_msg(msg);
             pong
-        }).map_err(|err| {
-                grpc::Error::Other("TODO(rpb): add better error message")
-            });
-        grpc::StreamingResponse::no_metadata(pongs)
+        }).map_err(|()| {
+            grpc::Error::Other("TODO(rpb): add better error message")
+        }))
     }
 }
 
